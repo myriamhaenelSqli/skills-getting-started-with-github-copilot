@@ -25,9 +25,48 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+
+          <div class="participants">
+            <strong>Participants:</strong>
+            <ul class="participant-list"></ul>
+          </div>
         `;
 
         activitiesList.appendChild(activityCard);
+
+        // populate participants list (show badges or a muted "no participants" message)
+        const ul = activityCard.querySelector(".participant-list");
+        if (Array.isArray(details.participants) && details.participants.length > 0) {
+          details.participants.forEach((p) => {
+            const li = document.createElement("li");
+            li.className = "participant-badge";
+
+            // create a small initial circle and the label (use email or name string)
+            const initial = document.createElement("span");
+            initial.className = "participant-initial";
+            const labelText = String(p).trim();
+            // derive initials from name/email
+            const initials = labelText
+              .split(/[\s@._-]+/)
+              .filter(Boolean)
+              .slice(0, 2)
+              .map(s => s[0].toUpperCase())
+              .join("");
+            initial.textContent = initials || "?";
+
+            const label = document.createElement("span");
+            label.textContent = labelText;
+
+            li.appendChild(initial);
+            li.appendChild(label);
+            ul.appendChild(li);
+          });
+        } else {
+          const li = document.createElement("li");
+          li.className = "no-participants";
+          li.textContent = "No participants yet";
+          ul.appendChild(li);
+        }
 
         // Add option to select dropdown
         const option = document.createElement("option");
