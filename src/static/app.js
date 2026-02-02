@@ -55,6 +55,21 @@ document.addEventListener("DOMContentLoaded", () => {
             initial.textContent = initials || "?";
 
             const label = document.createElement("span");
+
+            // Create delete icon
+            const deleteIcon = document.createElement("span");
+            deleteIcon.textContent = "🗑️";
+            deleteIcon.className = "delete-icon";
+            deleteIcon.onclick = async () => {
+              // Show confirmation dialog
+              const confirmed = confirm(`Are you sure you want to unregister ${labelText} from this activity?`);
+              if (confirmed) {
+                // Unregister participant logic here
+                await unregisterParticipant(activity, p);
+                li.remove();
+              }
+            };
+            li.appendChild(deleteIcon);
             label.textContent = labelText;
 
             li.appendChild(initial);
@@ -101,6 +116,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        // Refresh activities list to show the new participant
+        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
@@ -122,4 +139,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize app
   fetchActivities();
+
+  // Load unregister function
+  const script = document.createElement('script');
+  script.src = 'unregister.js';
+  document.body.appendChild(script);
 });
